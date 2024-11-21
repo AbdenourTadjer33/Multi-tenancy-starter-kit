@@ -12,6 +12,7 @@ use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
 use Stancl\Tenancy\Middleware;
+use App\Jobs\CreateTenantStorage;
 
 class TenancyServiceProvider extends ServiceProvider
 {
@@ -28,13 +29,14 @@ class TenancyServiceProvider extends ServiceProvider
                     Jobs\CreateDatabase::class,
                     Jobs\MigrateDatabase::class,
                     // Jobs\SeedDatabase::class,
+                    CreateTenantStorage::class,
 
                     // Your own jobs to prepare the tenant.
                     // Provision API keys, create S3 buckets, anything you want!
 
                 ])->send(function (Events\TenantCreated $event) {
                     return $event->tenant;
-                })->shouldBeQueued(false), // `false` by default, but you probably want to make this `true` for production.
+                })->shouldBeQueued(true), // `false` by default, but you probably want to make this `true` for production.
             ],
             Events\SavingTenant::class => [],
             Events\TenantSaved::class => [],
@@ -100,9 +102,21 @@ class TenancyServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->bootEvents();
-        $this->mapRoutes();
+        // $this->mapRoutes();
 
         $this->makeTenancyMiddlewareHighestPriority();
+
+        \Stancl\Tenancy\Middleware\InitializeTenancyByDomain::$onFail = function () {
+            dd("Tenant not found");
+        };
+
+        \Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain::$onFail = function () {
+            dd("Tenant not found");
+        };
+
+        \Stancl\Tenancy\Middleware\InitializeTenancyByPath::$onFail = function () {
+            dd("Tenant not found, in admin context");
+        };
     }
 
     protected function bootEvents()
