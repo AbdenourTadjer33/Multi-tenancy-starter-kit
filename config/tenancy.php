@@ -2,14 +2,11 @@
 
 declare(strict_types=1);
 
-use Stancl\Tenancy\Database\Models\Domain;
-use Stancl\Tenancy\Database\Models\Tenant;
-
 return [
-    'tenant_model' => Tenant::class,
+    'tenant_model' => App\Models\Tenant::class,
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
 
-    'domain_model' => Domain::class,
+    'domain_model' => App\Models\Domain::class,
 
     /**
      * The list of domains hosting your central app.
@@ -19,6 +16,7 @@ return [
     'central_domains' => [
         '127.0.0.1',
         'localhost',
+        'etadjer.test',
     ],
 
     /**
@@ -32,6 +30,7 @@ return [
         Stancl\Tenancy\Bootstrappers\CacheTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\FilesystemTenancyBootstrapper::class,
         Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper::class,
+        App\Bootstrappers\ViewTenancyBootstrapper::class
         // Stancl\Tenancy\Bootstrappers\RedisTenancyBootstrapper::class, // Note: phpredis is needed
     ],
 
@@ -51,8 +50,8 @@ return [
          * Tenant database names are created like this:
          * prefix + tenant_id + suffix.
          */
-        'prefix' => 'tenant',
-        'suffix' => '',
+        'prefix' => env('TENANCY_DB_PREFIX', 'tenant_'),
+        'suffix' => env('TENANCY_DB_SUFFIX', ''),
 
         /**
          * TenantDatabaseManagers are classes that handle the creation & deletion of tenant databases.
@@ -99,7 +98,7 @@ return [
         /**
          * Each disk listed in the 'disks' array will be suffixed by the suffix_base, followed by the tenant_id.
          */
-        'suffix_base' => 'tenant',
+        'suffix_base' => 'tenant_',
         'disks' => [
             'local',
             'public',
@@ -164,7 +163,7 @@ return [
      */
     'features' => [
         // Stancl\Tenancy\Features\UserImpersonation::class,
-        // Stancl\Tenancy\Features\TelescopeTags::class,
+        Stancl\Tenancy\Features\TelescopeTags::class,
         // Stancl\Tenancy\Features\UniversalRoutes::class,
         // Stancl\Tenancy\Features\TenantConfig::class, // https://tenancyforlaravel.com/docs/v3/features/tenant-config
         // Stancl\Tenancy\Features\CrossDomainRedirect::class, // https://tenancyforlaravel.com/docs/v3/features/cross-domain-redirect

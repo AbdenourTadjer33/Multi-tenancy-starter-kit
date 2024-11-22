@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "tailwind-tenant-admin.config.js",
+    "css": "resources/css/tenant-admin.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@/tenant-admin/components",
+    "utils": "@/tenant-admin/lib/utils",
+    "ui": "@/tenant-admin/components/ui",
+    "lib": "@/tenant-admin/lib",
+    "hooks": "@/tenant-admin/hooks"
+  },
+  "iconLibrary": "lucide"
+}
